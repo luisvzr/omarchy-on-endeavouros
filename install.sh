@@ -84,7 +84,13 @@ elif [[ "$ESP" != "/boot" ]]; then
     fi
 fi
 
-# ── 7. Run Omarchy install ────────────────────────────────────────────────────
-echo "[7/7] Starting Omarchy installation..."
+# ── 7. Fix DNS (systemd-resolved + resolv.conf symlink) ──────────────────────
+echo "[7/8] Fixing DNS: enabling systemd-resolved..."
+sudo systemctl enable --now systemd-resolved
+sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+sudo systemctl restart NetworkManager
+
+# ── 8. Run Omarchy install ────────────────────────────────────────────────────
+echo "[8/8] Starting Omarchy installation..."
 export OMARCHY_ONLINE_INSTALL=true
 source "$OMARCHY_DIR/install.sh"
